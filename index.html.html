@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Psychosuitcase - Unpack Your Mind, Travel Light</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f3ff',
+              100: '#e1e7fe',
+              200: '#c7d3fd',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            },
+            mint: {
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans Myanmar', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Inter & Noto Sans Myanmar -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Myanmar:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom Styles for Glassmorphism & Animations -->
+  <style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .dark .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Pulse animation for breathing circle */
+    @keyframes breatheCircle {
+      0% { transform: scale(0.85); box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+      50% { transform: scale(1.35); box-shadow: 0 0 50px rgba(52, 211, 153, 0.6); }
+      100% { transform: scale(0.85); box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+    }
+    .breathe-active {
+      animation: breatheCircle infinite ease-in-out;
+    }
+
+    /* Floating luggage animation */
+    @keyframes floatSuitcase {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(1deg); }
+    }
+    .float-anim {
+      animation: floatSuitcase 4s ease-in-out infinite;
+    }
+
+    /* Unpack dissolve effect */
+    .dissolve-out {
+      animation: dissolveAnim 0.8s forwards ease-out;
+    }
+    @keyframes dissolveAnim {
+      0% { opacity: 1; transform: scale(1); filter: blur(0px); }
+      50% { opacity: 0.5; transform: scale(1.1) translateY(-10px); filter: blur(4px); }
+      100% { opacity: 0; transform: scale(0.2) translateY(-30px); filter: blur(10px); }
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.4);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(156, 163, 175, 0.7);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans min-h-full flex flex-col transition-colors duration-300">
+
+  <!-- App Container -->
+  <div class="flex h-screen overflow-hidden">
+
+    <!-- Desktop Sidebar Navigation -->
+    <aside class="hidden lg:flex flex-col w-64 bg-white/80 dark:bg-slate-900/80 border-r border-slate-200/80 dark:border-slate-800/80 backdrop-blur-md justify-between z-20">
+      <div class="p-6">
+        <!-- Logo & Title -->
+        <div class="flex items-center space-x-3 mb-8 cursor-pointer" onclick="switchTab('dashboard')">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-mint-400 flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+            <i class="fa-solid font-bold fa-suitcase-rolling text-xl"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-mint-500 dark:from-brand-400 dark:to-mint-300">Psychosuitcase</h1>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium tracking-wide" data-i18n="tagline">Unpack Your Mind</p>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="space-y-1.5">
+          <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 bg-brand-50 text-brand-600 dark:bg-brand-900/40 dark:text-brand-300">
+            <i class="fa-solid fa-compass w-5 text-center text-lg"></i>
+            <span data-i18n="navDashboard">Dashboard</span>
+          </button>
+
+          <button onclick="switchTab('suitcase')" id="nav-suitcase" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all duration-200">
+            <i class="fa-solid fa-suitcase w-5 text-center text-lg"></i>
+            <span data-i18n="navSuitcase">The Suitcase</span>
+          </button>
+
+          <button onclick="switchTab('mindlab')" id="nav-mindlab" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all duration-200">
+            <i class="fa-solid fa-brain w-5 text-center text-lg"></i>
+            <span data-i18n="navMindLab">Mind Lab (CBT)</span>
+          </button>
+
+          <button onclick="switchTab('breathwork')" id="nav-breathwork" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all duration-200">
+            <i class="fa-solid fa-wind w-5 text-center text-lg"></i>
+            <span data-i18n="navBreathwork">Breathwork & Grounding</span>
+          </button>
+
+          <button onclick="switchTab('assessment')" id="nav-assessment" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all duration-200">
+            <i class="fa-solid fa-chart-pie w-5 text-center text-lg"></i>
+            <span data-i18n="navAssessment">Self-Assessment</span>
+          </button>
+
+          <button onclick="switchTab('journal')" id="nav-journal" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all duration-200">
+            <i class="fa-solid fa-tags w-5 text-center text-lg"></i>
+            <span data-i18n="navJournal">Luggage Tag & Journal</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Footer / Controls -->
+      <div class="p-4 m-4 rounded-2xl bg-slate-100/70 dark:bg-slate-800/50 space-y-3">
+        <div class="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
+          <span data-i18n="settings">Settings</span>
+          <i class="fa-solid fa-sliders"></i>
+        </div>
+        
+        <!-- Language Switcher -->
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Language</span>
+          <button onclick="toggleLanguage()" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600 hover:border-brand-500 transition-all">
+            <span id="lang-label">မြန်မာ</span>
+          </button>
+        </div>
+
+        <!-- Dark Mode Toggle -->
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Theme</span>
+          <button onclick="toggleDarkMode()" class="p-1.5 rounded-lg bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:border-brand-500 transition-all">
+            <i id="theme-icon" class="fa-solid fa-moon text-xs"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Container -->
+    <div class="flex-1 flex flex-col overflow-hidden relative">
+
+      <!-- Top Header (Mobile & General) -->
+      <header class="h-16 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between z-10">
+        <!-- Mobile Header Left Logo -->
+        <div class="flex items-center space-x-3 lg:hidden">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-mint-400 flex items-center justify-center text-white shadow-md">
+            <i class="fa-solid fa-suitcase-rolling"></i>
+          </div>
+          <span class="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-mint-500 dark:from-brand-400 dark:to-mint-300">Psychosuitcase</span>
+        </div>
+
+        <!-- Page Dynamic Title -->
+        <div class="hidden lg:block">
+          <h2 id="header-page-title" class="text-lg font-bold text-slate-800 dark:text-slate-100" data-i18n="navDashboard">Dashboard</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400" id="header-sub-quote">Travel light, release your mind's emotional weight.</p>
+        </div>
+
+        <!-- Top Right Quick Controls -->
+        <div class="flex items-center space-x-3">
+          <!-- Mobile Controls -->
+          <div class="flex lg:hidden items-center space-x-2">
+            <button onclick="toggleLanguage()" class="px-2 py-1 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+              <span id="lang-label-mobile">မြန်မာ</span>
+            </button>
+            <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+              <i id="theme-icon-mobile" class="fa-solid fa-moon"></i>
+            </button>
+          </div>
+
+          <!-- Quick Action Pill -->
+          <button onclick="openAddCustomModal()" class="flex items-center space-x-2 bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 text-white px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-medium shadow-md shadow-brand-500/20 transition-all transform hover:-translate-y-0.5">
+            <i class="fa-solid fa-plus"></i>
+            <span data-i18n="packBaggage">Pack Heavy Thought</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Scrollable Main View Area -->
+      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 pb-24 lg:pb-8">
+
+        <!-- VIEW 1: DASHBOARD -->
+        <section id="view-dashboard" class="tab-view space-y-6">
+          <!-- Welcome Banner Card -->
+          <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 text-white p-6 sm:p-8 shadow-xl shadow-brand-500/10">
+            <div class="absolute -right-10 -bottom-10 opacity-15 pointer-events-none">
+              <i class="fa-solid fa-suitcase-rolling text-[220px]"></i>
+            </div>
+            <div class="relative z-10 max-w-2xl space-y-3">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-md border border-white/20">
+                <i class="fa-solid fa-sparkles text-amber-300"></i> <span data-i18n="dailyAffirmationTitle">Daily Mental Wellness Space</span>
+              </span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight" id="welcome-heading">
+                Hello, Mindful Traveler ✨
+              </h2>
+              <p class="text-sm sm:text-base text-indigo-100 leading-relaxed font-light italic" id="daily-quote">
+                "Unpacking isn't about throwing away your memories; it's about making space for your inner peace."
+              </p>
+              <div class="pt-2 flex flex-wrap gap-3">
+                <button onclick="switchTab('suitcase')" class="bg-white text-brand-700 hover:bg-slate-100 font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm shadow-md transition-all">
+                  <i class="fa-solid fa-suitcase mr-1.5"></i> <span data-i18n="btnUnpackNow">Unpack Your Suitcase</span>
+                </button>
+                <button onclick="switchTab('breathwork')" class="bg-brand-500/40 hover:bg-brand-500/60 border border-white/30 font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm transition-all">
+                  <i class="fa-solid fa-wind mr-1.5"></i> <span data-i18n="btnBreathNow">Calm Breathing</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mood Check-in & History Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Daily Mood Picker -->
+            <div class="lg:col-span-1 glass-card p-6 rounded-3xl shadow-sm space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="font-bold text-base text-slate-800 dark:text-slate-100" data-i18n="howFeeling">How are you feeling today?</h3>
+                <span class="text-xs text-slate-400" id="current-date-text">Today</span>
+              </div>
+              <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="moodCheckDesc">Select your state to track your emotional baggage flow.</p>
+
+              <!-- Mood Buttons Grid -->
+              <div class="grid grid-cols-5 gap-2 pt-2" id="mood-picker-container">
+                <button onclick="recordMood(5, 'Great')" class="mood-btn flex flex-col items-center justify-center p-3 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-mint-400 dark:hover:border-mint-400 bg-white/50 dark:bg-slate-800/50 hover:bg-mint-50 dark:hover:bg-mint-900/20 transition-all group">
+                  <span class="text-2xl group-hover:scale-125 transition-transform">🤩</span>
+                  <span class="text-[10px] font-semibold mt-1 text-slate-600 dark:text-slate-300" data-i18n="moodGreat">Great</span>
+                </button>
+                <button onclick="recordMood(4, 'Calm')" class="mood-btn flex flex-col items-center justify-center p-3 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-brand-400 dark:hover:border-brand-400 bg-white/50 dark:bg-slate-800/50 hover:bg-brand-50 dark:hover:bg-brand-900/20 transition-all group">
+                  <span class="text-2xl group-hover:scale-125 transition-transform">🙂</span>
+                  <span class="text-[10px] font-semibold mt-1 text-slate-600 dark:text-slate-300" data-i18n="moodCalm">Calm</span>
+                </button>
+                <button onclick="recordMood(3, 'Okay')" class="mood-btn flex flex-col items-center justify-center p-3 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-400 bg-white/50 dark:bg-slate-800/50 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all group">
+                  <span class="text-2xl group-hover:scale-125 transition-transform">😐</span>
+                  <span class="text-[10px] font-semibold mt-1 text-slate-600 dark:text-slate-300" data-i18n="moodOkay">Okay</span>
+                </button>
+                <button onclick="recordMood(2, 'Anxious')" class="mood-btn flex flex-col items-center justify-center p-3 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-orange-400 dark:hover:border-orange-400 bg-white/50 dark:bg-slate-800/50 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all group">
+                  <span class="text-2xl group-hover:scale-125 transition-transform">😔</span>
+                  <span class="text-[10px] font-semibold mt-1 text-slate-600 dark:text-slate-300" data-i18n="moodAnxious">Anxious</span>
+                </button>
+                <button onclick="recordMood(1, 'Exhausted')" class="mood-btn flex flex-col items-center justify-center p-3 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-rose-400 dark:hover:border-rose-400 bg-white/50 dark:bg-slate-800/50 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-all group">
+                  <span class="text-2xl group-hover:scale-125 transition-transform">😫</span>
+                  <span class="text-[10px] font-semibold mt-1 text-slate-600 dark:text-slate-300" data-i18n="moodExhausted">Exhausted</span>
+                </button>
+              </div>
+
+              <!-- Today's Mood Status Banner -->
+              <div id="mood-feedback-banner" class="hidden p-3 rounded-2xl bg-mint-50 dark:bg-mint-900/20 border border-mint-200 dark:border-mint-800/50 flex items-center space-x-3">
+                <span class="text-2xl" id="logged-mood-emoji">🙂</span>
+                <div>
+                  <p class="text-xs font-bold text-mint-800 dark:text-mint-300" id="logged-mood-title">Recorded for Today!</p>
+                  <p class="text-[11px] text-mint-600 dark:text-mint-400" id="logged-mood-desc">Your emotional checkpoint is saved.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mood Trend Chart -->
+            <div class="lg:col-span-2 glass-card p-6 rounded-3xl shadow-sm flex flex-col justify-between">
+              <div class="flex items-center justify-between mb-2">
+                <div>
+                  <h3 class="font-bold text-base text-slate-800 dark:text-slate-100" data-i18n="moodTrendTitle">Emotional Journey Trend</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="moodTrendSub">7-Day emotional trajectory</p>
+                </div>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-300" id="streak-counter">
+                  <i class="fa-solid fa-fire text-amber-500 mr-1"></i> Streak: 1 Day
+                </span>
+              </div>
+              <div class="w-full h-48 relative">
+                <canvas id="moodChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Statistics & Quick Access Tiles -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <div class="glass-card p-5 rounded-2xl flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-suitcase-rolling"></i>
+              </div>
+              <div>
+                <p class="text-xs font-medium text-slate-500 dark:text-slate-400" data-i18n="statItemsUnpacked">Items Unpacked</p>
+                <h4 class="text-xl font-bold text-slate-800 dark:text-slate-100" id="stat-unpacked-count">0</h4>
+              </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-brain"></i>
+              </div>
+              <div>
+                <p class="text-xs font-medium text-slate-500 dark:text-slate-400" data-i18n="statThoughtsReframed">Thoughts Reframed</p>
+                <h4 class="text-xl font-bold text-slate-800 dark:text-slate-100" id="stat-reframed-count">0</h4>
+              </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-2xl bg-mint-100 dark:bg-mint-900/30 text-mint-600 dark:text-mint-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-wind"></i>
+              </div>
+              <div>
+                <p class="text-xs font-medium text-slate-500 dark:text-slate-400" data-i18n="statBreathMinutes">Breathwork Sessions</p>
+                <h4 class="text-xl font-bold text-slate-800 dark:text-slate-100" id="stat-breath-count">0</h4>
+              </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-heart-pulse"></i>
+              </div>
+              <div>
+                <p class="text-xs font-medium text-slate-500 dark:text-slate-400" data-i18n="statMindfulScore">Mindfulness Level</p>
+                <h4 class="text-xl font-bold text-slate-800 dark:text-slate-100" id="stat-mindful-level">Optimal</h4>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- VIEW 2: THE SUITCASE (UNPACK BAGGAGE) -->
+        <section id="view-suitcase" class="tab-view space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100" data-i18n="suitcaseTitle">Unpack Your Emotional Baggage</h2>
+              <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="suitcaseSub">Click on an item to inspect CBT psychological insights, practice release techniques, and lighten your load.</p>
+            </div>
+            <button onclick="openAddCustomModal()" class="inline-flex items-center space-x-2 bg-brand-600 hover:bg-brand-500 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-md transition-all self-start sm:self-auto">
+              <i class="fa-solid fa-plus"></i>
+              <span data-i18n="addCustomBaggage">Add Custom Baggage</span>
+            </button>
+          </div>
+
+          <!-- Visual Digital Suitcase Canvas Container -->
+          <div class="relative bg-gradient-to-br from-amber-900/10 via-slate-900/5 to-indigo-950/10 dark:from-slate-900 dark:to-indigo-950/50 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-800">
+            <!-- Suitcase Graphic Frame Header -->
+            <div class="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-4 mb-6">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-xl">
+                  <i class="fa-solid fa-suitcase"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-slate-800 dark:text-slate-100" data-i18n="currentTrunkContent">Current Trunk Contents</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400" id="baggage-weight-indicator">Total Weight: 8 Items Loaded</p>
+                </div>
+              </div>
+
+              <!-- Unpacked Progress Bar -->
+              <div class="w-36 sm:w-48 space-y-1">
+                <div class="flex justify-between text-[11px] font-semibold text-slate-600 dark:text-slate-400">
+                  <span data-i18n="unpackedProgress">Unpacked</span>
+                  <span id="unpack-progress-percent">0%</span>
+                </div>
+                <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div id="unpack-progress-bar" class="h-full bg-gradient-to-r from-mint-400 to-brand-500 w-0 transition-all duration-500"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Emotional Items Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="suitcase-items-grid">
+              <!-- Dynamically Populated by JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 3: MIND LAB (CBT THOUGHT REFRAMER) -->
+        <section id="view-mindlab" class="tab-view space-y-6 hidden">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100" data-i18n="mindlabTitle">Mind Lab: CBT Thought Reframer</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="mindlabSub">Transform automatic negative thoughts (ANTs) into rational, balanced perspectives using Cognitive Behavioral Science.</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left Form: 4-Step CBT Guided Wizard -->
+            <div class="lg:col-span-7 glass-card p-6 sm:p-8 rounded-3xl shadow-sm space-y-6">
+              
+              <!-- Step Progress Indicators -->
+              <div class="flex items-center justify-between text-xs font-semibold text-slate-400 border-b border-slate-200/80 dark:border-slate-800 pb-4">
+                <span class="text-brand-600 dark:text-brand-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-1 text-base"></i> <span data-i18n="cbtStep1">Situation</span></span>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                <span class="text-brand-600 dark:text-brand-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-2 text-base"></i> <span data-i18n="cbtStep2">Negative Thought</span></span>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                <span class="text-brand-600 dark:text-brand-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-3 text-base"></i> <span data-i18n="cbtStep3">Distortion</span></span>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                <span class="text-brand-600 dark:text-brand-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-4 text-base"></i> <span data-i18n="cbtStep4">Reframed</span></span>
+              </div>
+
+              <form id="cbt-form" onsubmit="saveCBTThought(event)" class="space-y-5">
+                <!-- Step 1: Situation -->
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5" data-i18n="cbtLabel1">
+                    1. What was the triggers or situation?
+                  </label>
+                  <input type="text" id="cbt-situation" required placeholder="e.g. Received critical feedback on a project at work..." 
+                    class="w-full px-4 py-3 rounded-2xl bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm">
+                </div>
+
+                <!-- Step 2: Automatic Negative Thought -->
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5" data-i18n="cbtLabel2">
+                    2. What is the Automatic Negative Thought (ANT)?
+                  </label>
+                  <textarea id="cbt-thought" rows="2" required placeholder="e.g. I am incompetent and I am going to get fired..." 
+                    class="w-full px-4 py-3 rounded-2xl bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"></textarea>
+                </div>
+
+                <!-- Step 3: Select Distortion -->
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-2" data-i18n="cbtLabel3">
+                    3. Identify Cognitive Distortion Type
+                  </label>
+                  <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="distortion-chips">
+                    <!-- Populated dynamically or static chips -->
+                    <button type="button" onclick="selectDistortion(this, 'Catastrophizing')" class="distortion-chip p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-medium text-left hover:border-brand-500 transition-all bg-white/40 dark:bg-slate-800/40">
+                      💥 Catastrophizing
+                    </button>
+                    <button type="button" onclick="selectDistortion(this, 'All-or-Nothing')" class="distortion-chip p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-medium text-left hover:border-brand-500 transition-all bg-white/40 dark:bg-slate-800/40">
+                      ⚖️ All-or-Nothing
+                    </button>
+                    <button type="button" onclick="selectDistortion(this, 'Mind Reading')" class="distortion-chip p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-medium text-left hover:border-brand-500 transition-all bg-white/40 dark:bg-slate-800/40">
+                      🔮 Mind Reading
+                    </button>
+                    <button type="button" onclick="selectDistortion(this, 'Emotional Reasoning')" class="distortion-chip p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-medium text-left hover:border-brand-500 transition-all bg-white/40 dark:bg-slate-800/40">
+                      🌊 Emotional Reasoning
+                    </button>
+                    <button type="button" onclick="selectDistortion(this, 'Personalization')" class="distortion-chip p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-medium text-left hover:border-brand-500 transition-all bg-white/40 dark:bg-slate-800/40">
+                      🎯 Personalization
+                    </button>
+                    <button type="button" onclick="selectDistortion(this, 'Overgeneralization')" class="distortion-chip p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-medium text-left hover:border-brand-500 transition-all bg-white/40 dark:bg-slate-800/40">
+                      🔄 Overgeneralization
+                    </button>
+                  </div>
+                  <input type="hidden" id="cbt-distortion-val" value="Catastrophizing">
+                </div>
+
+                <!-- Step 4: Balanced Reframed Thought -->
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5" data-i18n="cbtLabel4">
+                    4. Write a Realistic, Compassionate Reframed Thought
+                  </label>
+                  <textarea id="cbt-reframed" rows="3" required placeholder="e.g. Feedback is an opportunity to grow. One mistake does not define my worth or my whole career..." 
+                    class="w-full px-4 py-3 rounded-2xl bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-brand-500/25 transition-all text-sm flex items-center justify-center space-x-2">
+                  <i class="fa-solid fa-sparkles"></i>
+                  <span data-i18n="cbtSaveBtn">Save & Anchor Reframed Thought</span>
+                </button>
+              </form>
+            </div>
+
+            <!-- Right Column: Past Reframed Thoughts Log -->
+            <div class="lg:col-span-5 glass-card p-6 rounded-3xl shadow-sm space-y-4 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="font-bold text-base text-slate-800 dark:text-slate-100" data-i18n="cbtLogTitle">Saved Reframed Thoughts</h3>
+                  <span class="text-xs text-slate-400" id="cbt-count-badge">0 Entries</span>
+                </div>
+
+                <div class="space-y-3 max-h-[460px] overflow-y-auto pr-1" id="cbt-entries-log">
+                  <!-- Dynamically populated entries -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 4: BREATHWORK & GROUNDING STUDIO -->
+        <section id="view-breathwork" class="tab-view space-y-6 hidden">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100" data-i18n="breathworkTitle">Grounding & Breathwork Studio</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="breathworkSub">Regulate your nervous system through audio-guided breathing patterns and sensory grounding exercises.</p>
+          </div>
+
+          <!-- Studio Mode Tabs Switcher -->
+          <div class="flex border-b border-slate-200 dark:border-slate-800 space-x-8">
+            <button onclick="switchBreathSubtab('breath')" id="subtab-breath" class="pb-3 text-sm font-bold border-b-2 border-brand-500 text-brand-600 dark:text-brand-400">
+              <i class="fa-solid fa-lungs mr-1.5"></i> <span data-i18n="tabRhythmicBreathing">Rhythmic Breathing Guide</span>
+            </button>
+            <button onclick="switchBreathSubtab('grounding')" id="subtab-grounding" class="pb-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">
+              <i class="fa-solid fa-hand-holding-heart mr-1.5"></i> <span data-i18n="tab54321Grounding">5-4-3-2-1 Sensory Grounding</span>
+            </button>
+          </div>
+
+          <!-- SUBTAB 1: ANIMATED BREATHWORK GUIDE -->
+          <div id="subtab-content-breath" class="glass-card p-8 rounded-3xl shadow-sm text-center space-y-6">
+            
+            <!-- Technique Selector -->
+            <div class="max-w-md mx-auto flex justify-center space-x-2 bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl">
+              <button onclick="setBreathTechnique('box')" id="btn-tech-box" class="flex-1 py-2 text-xs font-semibold rounded-xl bg-white dark:bg-slate-700 text-brand-600 dark:text-brand-300 shadow-sm transition-all">
+                Box (4-4-4-4)
+              </button>
+              <button onclick="setBreathTechnique('relax')" id="btn-tech-relax" class="flex-1 py-2 text-xs font-semibold rounded-xl text-slate-600 dark:text-slate-400 transition-all">
+                Relax (4-7-8)
+              </button>
+              <button onclick="setBreathTechnique('calm')" id="btn-tech-calm" class="flex-1 py-2 text-xs font-semibold rounded-xl text-slate-600 dark:text-slate-400 transition-all">
+                Calm (5-5)
+              </button>
+            </div>
+
+            <!-- Animated Expanding Breathing Canvas / Pulsing Orb -->
+            <div class="py-8 flex flex-col items-center justify-center relative min-h-[280px]">
+              <div id="breath-orb-outer" class="w-48 h-48 sm:w-56 sm:h-56 rounded-full bg-gradient-to-tr from-brand-500/30 via-indigo-500/20 to-mint-400/30 flex items-center justify-center border border-brand-400/30 transition-all duration-1000 relative">
+                <div id="breath-orb-inner" class="w-32 h-32 sm:w-36 sm:h-36 rounded-full bg-gradient-to-tr from-brand-600 to-mint-400 flex items-center justify-center text-white shadow-2xl transition-all duration-1000">
+                  <span id="breath-timer-display" class="text-3xl font-bold">4</span>
+                </div>
+              </div>
+              
+              <!-- Dynamic Status Text -->
+              <h3 id="breath-phase-text" class="text-2xl font-bold mt-6 text-slate-800 dark:text-slate-100">Ready to start</h3>
+              <p id="breath-phase-sub" class="text-xs text-slate-500 dark:text-slate-400 mt-1">Press Start to begin audio & visual guidance</p>
+            </div>
+
+            <!-- Breath Controls -->
+            <div class="flex items-center justify-center space-x-4">
+              <button onclick="toggleBreathSession()" id="btn-breath-toggle" class="bg-brand-600 hover:bg-brand-500 text-white font-bold px-8 py-3 rounded-2xl shadow-lg shadow-brand-500/30 transition-all text-sm flex items-center space-x-2">
+                <i class="fa-solid fa-play" id="breath-play-icon"></i>
+                <span id="breath-play-label">Start Session</span>
+              </button>
+              <button onclick="toggleSoundSynth()" id="btn-sound-toggle" class="p-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 hover:border-brand-500 transition-all">
+                <i class="fa-solid fa-volume-high" id="sound-icon"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- SUBTAB 2: 5-4-3-2-1 SENSORY GROUNDING EXERCISE -->
+          <div id="subtab-content-grounding" class="glass-card p-6 sm:p-8 rounded-3xl shadow-sm space-y-6 hidden">
+            <div class="text-center max-w-xl mx-auto space-y-2">
+              <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100" data-i18n="groundingHeader">5-4-3-2-1 Sensory Reset</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="groundingSub">A proven grounding technique to bring your awareness back to the present moment when feeling overwhelmed.</p>
+            </div>
+
+            <div class="space-y-4 max-w-2xl mx-auto">
+              <!-- Item 5: See -->
+              <div class="p-4 rounded-2xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 space-y-2">
+                <div class="flex items-center space-x-3 text-brand-600 dark:text-brand-400 font-bold text-sm">
+                  <span class="w-7 h-7 rounded-lg bg-brand-100 dark:bg-brand-900/40 flex items-center justify-center">5</span>
+                  <i class="fa-solid fa-eye text-base"></i>
+                  <span data-i18n="sensory5">Acknowledge 5 things you can SEE around you</span>
+                </div>
+                <input type="text" placeholder="e.g., A desk lamp, a green plant, wooden pattern..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 text-xs border border-slate-200 dark:border-slate-800 focus:outline-none">
+              </div>
+
+              <!-- Item 4: Touch -->
+              <div class="p-4 rounded-2xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 space-y-2">
+                <div class="flex items-center space-x-3 text-indigo-600 dark:text-indigo-400 font-bold text-sm">
+                  <span class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center">4</span>
+                  <i class="fa-solid fa-hand text-base"></i>
+                  <span data-i18n="sensory4">Acknowledge 4 things you can TOUCH</span>
+                </div>
+                <input type="text" placeholder="e.g., The fabric of your sweater, cool desk surface..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 text-xs border border-slate-200 dark:border-slate-800 focus:outline-none">
+              </div>
+
+              <!-- Item 3: Hear -->
+              <div class="p-4 rounded-2xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 space-y-2">
+                <div class="flex items-center space-x-3 text-mint-600 dark:text-mint-400 font-bold text-sm">
+                  <span class="w-7 h-7 rounded-lg bg-mint-100 dark:bg-mint-900/40 flex items-center justify-center">3</span>
+                  <i class="fa-solid fa-ear-listen text-base"></i>
+                  <span data-i18n="sensory3">Acknowledge 3 things you can HEAR</span>
+                </div>
+                <input type="text" placeholder="e.g., Distant traffic, ceiling fan humming..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 text-xs border border-slate-200 dark:border-slate-800 focus:outline-none">
+              </div>
+
+              <!-- Item 2: Smell -->
+              <div class="p-4 rounded-2xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 space-y-2">
+                <div class="flex items-center space-x-3 text-amber-600 dark:text-amber-400 font-bold text-sm">
+                  <span class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">2</span>
+                  <i class="fa-solid fa-wind text-base"></i>
+                  <span data-i18n="sensory2">Acknowledge 2 things you can SMELL</span>
+                </div>
+                <input type="text" placeholder="e.g., Fresh coffee, rain aroma..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 text-xs border border-slate-200 dark:border-slate-800 focus:outline-none">
+              </div>
+
+              <!-- Item 1: Taste -->
+              <div class="p-4 rounded-2xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 space-y-2">
+                <div class="flex items-center space-x-3 text-rose-600 dark:text-rose-400 font-bold text-sm">
+                  <span class="w-7 h-7 rounded-lg bg-rose-100 dark:bg-rose-900/40 flex items-center justify-center">1</span>
+                  <i class="fa-solid fa-utensils text-base"></i>
+                  <span data-i18n="sensory1">Acknowledge 1 thing you can TASTE</span>
+                </div>
+                <input type="text" placeholder="e.g., Mint toothpaste, tea aftertaste..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 text-xs border border-slate-200 dark:border-slate-800 focus:outline-none">
+              </div>
+
+              <button onclick="finishGroundingExercise()" class="w-full bg-mint-500 hover:bg-mint-600 text-white font-bold py-3 rounded-2xl shadow-lg transition-all text-sm">
+                <i class="fa-solid fa-check-circle mr-1.5"></i> <span data-i18n="completeGrounding">Complete Sensory Anchoring</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 5: SELF-ASSESSMENT HUB -->
+        <section id="view-assessment" class="tab-view space-y-6 hidden">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100" data-i18n="assessmentTitle">Interactive Self-Assessment Hub</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="assessmentSub">Reflect on your current mental load, burnout indicators, and mindfulness presence level.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Test 1: Burnout Check -->
+            <div class="glass-card p-6 rounded-3xl space-y-4 flex flex-col justify-between hover:shadow-lg transition-all border border-slate-200/80 dark:border-slate-800">
+              <div class="space-y-3">
+                <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl font-bold">
+                  <i class="fa-solid fa-fire-flame-curved"></i>
+                </div>
+                <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100" data-i18n="testBurnoutTitle">Burnout & Exhaustion Meter</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="testBurnoutDesc">Evaluate physical, emotional, and cognitive fatigue levels.</p>
+              </div>
+              <button onclick="startAssessment('burnout')" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-2.5 rounded-xl text-xs transition-all">
+                <span data-i18n="startTestBtn">Take Quick Quiz (5 Qs)</span>
+              </button>
+            </div>
+
+            <!-- Test 2: Stress Load Check -->
+            <div class="glass-card p-6 rounded-3xl space-y-4 flex flex-col justify-between hover:shadow-lg transition-all border border-slate-200/80 dark:border-slate-800">
+              <div class="space-y-3">
+                <div class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl font-bold">
+                  <i class="fa-solid fa-weight-hanging"></i>
+                </div>
+                <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100" data-i18n="testStressTitle">Baggage Load Indicator</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="testStressDesc">Measure how much unreleased emotional baggage you are carrying today.</p>
+              </div>
+              <button onclick="startAssessment('baggage')" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-2.5 rounded-xl text-xs transition-all">
+                <span data-i18n="startTestBtn">Take Quick Quiz (5 Qs)</span>
+              </button>
+            </div>
+
+            <!-- Test 3: Mindfulness Check -->
+            <div class="glass-card p-6 rounded-3xl space-y-4 flex flex-col justify-between hover:shadow-lg transition-all border border-slate-200/80 dark:border-slate-800">
+              <div class="space-y-3">
+                <div class="w-12 h-12 rounded-2xl bg-mint-100 dark:bg-mint-900/40 text-mint-600 dark:text-mint-400 flex items-center justify-center text-xl font-bold">
+                  <i class="fa-solid fa-leaf"></i>
+                </div>
+                <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100" data-i18n="testMindfulTitle">Mindfulness Presence Index</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="testMindfulDesc">Assess your present moment awareness and self-compassion.</p>
+              </div>
+              <button onclick="startAssessment('mindfulness')" class="w-full bg-mint-600 hover:bg-mint-500 text-white font-bold py-2.5 rounded-xl text-xs transition-all">
+                <span data-i18n="startTestBtn">Take Quick Quiz (5 Qs)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Past Assessment Result Display -->
+          <div id="assessment-results-card" class="glass-card p-6 rounded-3xl space-y-4">
+            <h3 class="font-bold text-base text-slate-800 dark:text-slate-100" data-i18n="assessmentResultHeader">Latest Reflection Summary</h3>
+            <div class="flex flex-col sm:flex-row items-center gap-6" id="assessment-summary-body">
+              <div class="w-24 h-24 rounded-full border-4 border-brand-500 flex items-center justify-center text-2xl font-extrabold text-brand-600 dark:text-brand-400">
+                80%
+              </div>
+              <div class="space-y-1 text-center sm:text-left">
+                <h4 class="font-bold text-slate-800 dark:text-slate-100">Optimal Mindfulness Balance</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400">You are managing your mental load smoothly. Keep practicing daily breathwork and unpacking heavy thoughts.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 6: LUGGAGE TAG AFFIRMATION BUILDER & JOURNAL -->
+        <section id="view-journal" class="tab-view space-y-6 hidden">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100" data-i18n="tagJournalTitle">Luggage Tag Affirmation & Journal</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="tagJournalSub">Create custom printable/savable digital Luggage Tag Affirmations and keep a compassionate daily micro-journal.</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left: Custom Luggage Tag Builder -->
+            <div class="lg:col-span-6 glass-card p-6 sm:p-8 rounded-3xl shadow-sm space-y-6">
+              <h3 class="font-bold text-base text-slate-800 dark:text-slate-100" data-i18n="tagBuilderHeading">Custom Luggage Tag Affirmation</h3>
+
+              <!-- Interactive Visual Luggage Tag Card Preview -->
+              <div id="luggage-tag-preview" class="relative max-w-sm mx-auto p-6 rounded-3xl bg-gradient-to-br from-indigo-600 via-brand-600 to-purple-700 text-white shadow-2xl space-y-4 border-2 border-white/20">
+                <!-- Suitcase Strap Attachment Loop -->
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-6 h-8 border-4 border-amber-300/80 rounded-t-full bg-slate-900/50"></div>
+                
+                <div class="flex items-center justify-between border-b border-white/20 pb-3">
+                  <span class="text-[10px] font-bold tracking-widest uppercase text-amber-300">PSYCHOSUITCASE TAG</span>
+                  <i id="tag-preview-icon" class="fa-solid fa-compass text-lg"></i>
+                </div>
+
+                <div class="py-4 space-y-2 text-center">
+                  <p id="tag-preview-text" class="text-base font-bold leading-snug">
+                    "I travel light. I release what I cannot control."
+                  </p>
+                  <p id="tag-preview-my" class="text-xs text-indigo-200 font-light">
+                    နားနားနေနေ သွားနိုင်ပါတယ်
+                  </p>
+                </div>
+
+                <div class="flex justify-between items-end text-[10px] text-indigo-200 font-mono border-t border-white/20 pt-2">
+                  <span>DESTINATION: PEACE</span>
+                  <span>LOAD: LIGHT</span>
+                </div>
+              </div>
+
+              <!-- Luggage Tag Customization Controls -->
+              <div class="space-y-4 pt-2">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1" data-i18n="tagTextLabel">Affirmation Text (English / Burmese)</label>
+                  <input type="text" id="tag-input-text" value="I travel light. I release what I cannot control." oninput="updateTagPreview()" class="w-full px-3 py-2 text-xs rounded-xl bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                </div>
+
+                <!-- Color Palette Switcher -->
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Theme Palette</label>
+                  <div class="flex space-x-2">
+                    <button onclick="setTagTheme('indigo')" class="w-7 h-7 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 border-2 border-white shadow"></button>
+                    <button onclick="setTagTheme('mint')" class="w-7 h-7 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 border-2 border-white shadow"></button>
+                    <button onclick="setTagTheme('amber')" class="w-7 h-7 rounded-full bg-gradient-to-r from-amber-600 to-orange-600 border-2 border-white shadow"></button>
+                    <button onclick="setTagTheme('rose')" class="w-7 h-7 rounded-full bg-gradient-to-r from-rose-600 to-pink-600 border-2 border-white shadow"></button>
+                  </div>
+                </div>
+
+                <button onclick="saveLuggageTag()" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-md">
+                  <i class="fa-solid fa-bookmark mr-1"></i> <span data-i18n="saveTagBtn">Save Luggage Tag to Gallery</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Right: Micro Journal -->
+            <div class="lg:col-span-6 glass-card p-6 sm:p-8 rounded-3xl shadow-sm space-y-6 flex flex-col justify-between">
+              <div class="space-y-4">
+                <h3 class="font-bold text-base text-slate-800 dark:text-slate-100" data-i18n="journalHeading">Digital Reflection Journal</h3>
+                
+                <form onsubmit="saveJournalEntry(event)" class="space-y-3">
+                  <textarea id="journal-text" rows="4" required placeholder="What baggage are you ready to leave behind today? Express your thoughts freely..." 
+                    class="w-full px-4 py-3 rounded-2xl bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"></textarea>
+                  
+                  <button type="submit" class="w-full bg-gradient-to-r from-mint-500 to-teal-600 hover:from-mint-400 hover:to-teal-500 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-md">
+                    <i class="fa-solid fa-paper-plane mr-1"></i> <span data-i18n="saveJournalBtn">Post Micro Journal Entry</span>
+                  </button>
+                </form>
+
+                <!-- Journal Entries List -->
+                <div class="space-y-3 max-h-56 overflow-y-auto pt-2" id="journal-entries-container">
+                  <!-- Dynamically Rendered Entries -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+
+      <!-- Bottom Mobile Bar -->
+      <nav class="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/90 dark:bg-slate-900/90 border-t border-slate-200 dark:border-slate-800 backdrop-blur-md flex items-center justify-around z-30 px-2">
+        <button onclick="switchTab('dashboard')" id="mobile-nav-dashboard" class="flex flex-col items-center justify-center w-full h-full text-brand-600 dark:text-brand-400">
+          <i class="fa-solid fa-compass text-lg"></i>
+          <span class="text-[10px] font-medium mt-0.5">Home</span>
+        </button>
+        <button onclick="switchTab('suitcase')" id="mobile-nav-suitcase" class="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400">
+          <i class="fa-solid fa-suitcase text-lg"></i>
+          <span class="text-[10px] font-medium mt-0.5">Suitcase</span>
+        </button>
+        <button onclick="switchTab('mindlab')" id="mobile-nav-mindlab" class="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400">
+          <i class="fa-solid fa-brain text-lg"></i>
+          <span class="text-[10px] font-medium mt-0.5">Mind Lab</span>
+        </button>
+        <button onclick="switchTab('breathwork')" id="mobile-nav-breathwork" class="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400">
+          <i class="fa-solid fa-wind text-lg"></i>
+          <span class="text-[10px] font-medium mt-0.5">Breathwork</span>
+        </button>
+        <button onclick="switchTab('journal')" id="mobile-nav-journal" class="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400">
+          <i class="fa-solid fa-tags text-lg"></i>
+          <span class="text-[10px] font-medium mt-0.5">Journal</span>
+        </button>
+      </nav>
+
+    </div>
+  </div>
+
+  <!-- MODAL 1: UNPACK BAGGAGE DETAIL MODAL -->
+  <div id="modal-unpack-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl relative border border-slate-200 dark:border-slate-800">
+      <button onclick="closeUnpackModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+
+      <div class="flex items-center space-x-3">
+        <span id="modal-item-icon" class="text-3xl">🎒</span>
+        <div>
+          <h3 id="modal-item-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">Overthinking</h3>
+          <p id="modal-item-my" class="text-xs text-brand-600 dark:text-brand-400 font-medium">လွန်ကဲစွာ တွေးတောခြင်း</p>
+        </div>
+      </div>
+
+      <!-- CBT Insight -->
+      <div class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 space-y-1">
+        <h4 class="text-xs font-bold text-indigo-800 dark:text-indigo-300 uppercase tracking-wide">Psychological Insight</h4>
+        <p id="modal-item-insight" class="text-xs text-indigo-950 dark:text-indigo-200 leading-relaxed">
+          Overthinking creates a false sense of control over unpredictable future events.
+        </p>
+      </div>
+
+      <!-- Coping Steps -->
+      <div class="space-y-2">
+        <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">3-Step Unpacking Exercise</h4>
+        <ul id="modal-item-steps" class="space-y-2 text-xs text-slate-600 dark:text-slate-300">
+          <li class="flex items-start space-x-2">
+            <i class="fa-solid fa-circle-check text-mint-500 mt-0.5"></i>
+            <span>Notice and acknowledge the thought without judgment.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="pt-2 flex space-x-3">
+        <button onclick="triggerReleaseBaggage()" class="flex-1 bg-gradient-to-r from-mint-500 to-teal-600 hover:from-mint-400 hover:to-teal-500 text-white font-bold py-3 rounded-2xl shadow-lg shadow-mint-500/20 text-xs transition-all flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-sparkles"></i>
+          <span data-i18n="releaseBaggageBtn">Release & Unpack This Item</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: ADD CUSTOM BAGGAGE MODAL -->
+  <div id="modal-add-custom" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative border border-slate-200 dark:border-slate-800">
+      <button onclick="closeAddCustomModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+
+      <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100" data-i18n="addCustomTitle">Pack Custom Emotional Baggage</h3>
+      
+      <form onsubmit="handleAddCustomItem(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Item Title (English / Burmese)</label>
+          <input type="text" id="custom-item-name" required placeholder="e.g. Perfectionism Anxiety / ပြီးပြည့်စုံချင်စိတ်" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Coping Insight / Reminder</label>
+          <textarea id="custom-item-insight" rows="3" required placeholder="Write a gentle reminder or reality check..." class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-2.5 rounded-xl text-xs transition-all">
+          <span data-i18n="confirmPackBtn">Pack into Suitcase</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       1. BILINGUAL DICTIONARY & I18N ENGINE
+       ========================================================================== */
+    const i18n = {
+      en: {
+        tagline: "Unpack Your Mind, Travel Light",
+        navDashboard: "Dashboard",
+        navSuitcase: "The Suitcase",
+        navMindLab: "Mind Lab (CBT)",
+        navBreathwork: "Breathwork & Grounding",
+        navAssessment: "Self-Assessment",
+        navJournal: "Luggage Tag & Journal",
+        settings: "Settings",
+        packBaggage: "Pack Heavy Thought",
+        dailyAffirmationTitle: "Daily Mental Wellness Space",
+        btnUnpackNow: "Unpack Your Suitcase",
+        btnBreathNow: "Calm Breathing",
+        howFeeling: "How are you feeling today?",
+        moodCheckDesc: "Select your state to track your emotional baggage flow.",
+        moodGreat: "Great",
+        moodCalm: "Calm",
+        moodOkay: "Okay",
+        moodAnxious: "Anxious",
+        moodExhausted: "Exhausted",
+        moodTrendTitle: "Emotional Journey Trend",
+        moodTrendSub: "7-Day emotional trajectory",
+        statItemsUnpacked: "Items Unpacked",
+        statThoughtsReframed: "Thoughts Reframed",
+        statBreathMinutes: "Breath Sessions",
+        statMindfulScore: "Mindfulness Level",
+        suitcaseTitle: "Unpack Your Emotional Baggage",
+        suitcaseSub: "Click on an item to inspect CBT psychological insights, practice release techniques, and lighten your load.",
+        addCustomBaggage: "Add Custom Baggage",
+        currentTrunkContent: "Current Trunk Contents",
+        unpackedProgress: "Unpacked",
+        mindlabTitle: "Mind Lab: CBT Thought Reframer",
+        mindlabSub: "Transform automatic negative thoughts (ANTs) into rational, balanced perspectives using Cognitive Behavioral Science.",
+        cbtStep1: "Situation",
+        cbtStep2: "Negative Thought",
+        cbtStep3: "Distortion",
+        cbtStep4: "Reframed",
+        cbtLabel1: "1. What was the trigger or situation?",
+        cbtLabel2: "2. What is the Automatic Negative Thought (ANT)?",
+        cbtLabel3: "3. Identify Cognitive Distortion Type",
+        cbtLabel4: "4. Write a Realistic, Compassionate Reframed Thought",
+        cbtSaveBtn: "Save & Anchor Reframed Thought",
+        cbtLogTitle: "Saved Reframed Thoughts",
+        breathworkTitle: "Grounding & Breathwork Studio",
+        breathworkSub: "Regulate your nervous system through audio-guided breathing patterns and sensory grounding exercises.",
+        tabRhythmicBreathing: "Rhythmic Breathing Guide",
+        tab54321Grounding: "5-4-3-2-1 Sensory Grounding",
+        groundingHeader: "5-4-3-2-1 Sensory Reset",
+        groundingSub: "A proven grounding technique to bring your awareness back to the present moment when feeling overwhelmed.",
+        sensory5: "Acknowledge 5 things you can SEE around you",
+        sensory4: "Acknowledge 4 things you can TOUCH",
+        sensory3: "Acknowledge 3 things you can HEAR",
+        sensory2: "Acknowledge 2 things you can SMELL",
+        sensory1: "Acknowledge 1 thing you can TASTE",
+        completeGrounding: "Complete Sensory Anchoring",
+        assessmentTitle: "Interactive Self-Assessment Hub",
+        assessmentSub: "Reflect on your current mental load, burnout indicators, and mindfulness presence level.",
+        testBurnoutTitle: "Burnout & Exhaustion Meter",
+        testBurnoutDesc: "Evaluate physical, emotional, and cognitive fatigue levels.",
+        testStressTitle: "Baggage Load Indicator",
+        testStressDesc: "Measure how much unreleased emotional baggage you are carrying today.",
+        testMindfulTitle: "Mindfulness Presence Index",
+        testMindfulDesc: "Assess your present moment awareness and self-compassion.",
+        startTestBtn: "Take Quick Quiz (5 Qs)",
+        assessmentResultHeader: "Latest Reflection Summary",
+        tagJournalTitle: "Luggage Tag Affirmation & Journal",
+        tagJournalSub: "Create custom printable/savable digital Luggage Tag Affirmations and keep a compassionate daily micro-journal.",
+        tagBuilderHeading: "Custom Luggage Tag Affirmation",
+        tagTextLabel: "Affirmation Text (English / Burmese)",
+        saveTagBtn: "Save Luggage Tag to Gallery",
+        journalHeading: "Digital Reflection Journal",
+        saveJournalBtn: "Post Micro Journal Entry",
+        releaseBaggageBtn: "Release & Unpack This Item",
+        addCustomTitle: "Pack Custom Emotional Baggage",
+        confirmPackBtn: "Pack into Suitcase"
+      },
+      my: {
+        tagline: "စိတ်အေးချမ်းစွာ ပေါ့ပေါ့ပါးပါး ခရီးဆက်ပါ",
+        navDashboard: "ပင်မစာမျက်နှာ",
+        navSuitcase: "ခရီးဆောင်အိတ်",
+        navMindLab: "စိတ်ဓာတ်ပြုပြင်ရေး (CBT)",
+        navBreathwork: "အသက်ရှူ mash & သတိပြုခြင်း",
+        navAssessment: "မိမိကိုယ်ကို ဆန်းစစ်ခြင်း",
+        navJournal: "ခွန်အားဖြည့်စာ & ဂျာနယ်",
+        settings: "ပြင်ဆင်ချက်များ",
+        packBaggage: "စိတ်ဝန်ထုပ် ထည့်သွင်းရန်",
+        dailyAffirmationTitle: "နေ့စဉ် စိတ်ပိုင်းဆိုင်ရာ အေးချမ်းရေး",
+        btnUnpackNow: "ခရီးဆောင်အိတ် ဖွင့်လှစ်ရန်",
+        btnBreathNow: "အသက်ရှူ လေ့ကျင့်ရန်",
+        howFeeling: "ဒီနေ့ စိတ်ခံစားချက် ဘယ်လိုရှိပါသလဲ?",
+        moodCheckDesc: "သင်၏ စိတ်ခံစားချက် အခြေအနေကို မှတ်တမ်းတင်ပါ",
+        moodGreat: "အလွန်ကောင်း",
+        moodCalm: "အေးချမ်း",
+        moodOkay: "မဆိုးပါ",
+        moodAnxious: "စိုးရိမ်",
+        moodExhausted: "ဝန်ပိ",
+        moodTrendTitle: "စိတ်ခံစားချက် ပြောင်းလဲမှု မှတ်တမ်း",
+        moodTrendSub: "၇ ရက်တာ စိတ်ပိုင်းဆိုင်ရာ အခြေအနေ",
+        statItemsUnpacked: "ဖြေလျှော့ပြီး ဝန်ထုပ်များ",
+        statThoughtsReframed: "ပြုပြင်ပြီး အတွေးများ",
+        statBreathMinutes: "အသက်ရှူ လေ့ကျင့်မှုများ",
+        statMindfulScore: "သတိပြုနိုင်မှု အဆင့်",
+        suitcaseTitle: "စိတ်ပိုင်းဆိုင်ရာ ဝန်ထုပ်များ ဖြေလျှော့ရန်",
+        suitcaseSub: "အကြောင်းအရာ တစ်ခုစီကို နှိပ်၍ စိတ်ပညာဆိုင်ရာ အကြံပြုချက်များ ဖတ်ရှုပြီး စိတ်ပေါ့ပါးအောင် ပြုလုပ်ပါ။",
+        addCustomBaggage: "စိတ်ဝန်ထုပ် အသစ်ထည့်ရန်",
+        currentTrunkContent: "အိတ်ထဲရှိ စိတ်အာရုံ ဝန်ထုပ်များ",
+        unpackedProgress: "ဖြေလျှော့ပြီးစီးမှု",
+        mindlabTitle: "Mind Lab: စိတ်ဓာတ်ပြုပြင်ရေး (CBT)",
+        mindlabSub: "မကောင်းသော အလိုအလျောက် အတွေးများကို မှန်ကန် အပြုသဘောဆောင်သော အတွေးများအဖြစ် CBT စိတ်ပညာဖြင့် ပြောင်းလဲပါ။",
+        cbtStep1: "အခြေအနေ",
+        cbtStep2: "မကောင်းသောအတွေး",
+        cbtStep3: "အတွေးချွတ်ယွင်းမှု",
+        cbtStep4: "ပြုပြင်ပြီးအတွေး",
+        cbtLabel1: "၁။ မည်သည့် အဖြစ်အပျက်/အကြောင်းရင်း ဖြစ်ခဲ့သနည်း?",
+        cbtLabel2: "၂။ စိတ်ထဲ အလိုအလျောက် ပေါ်လာသော မကောင်းသည့် အတွေးမှာ အဘယ်နည်း?",
+        cbtLabel3: "၃။ အတွေး ချွတ်ယွင်းမှု အမျိုးအစားကို ရွေးချယ်ပါ",
+        cbtLabel4: "၄။ ပိုမို လက်တွေ့ကျပြီး ကြင်နာသော အတွေးသစ်ကို ရေးသားပါ",
+        cbtSaveBtn: "ပြုပြင်ပြီး အတွေးကို သိမ်းဆည်းရန်",
+        cbtLogTitle: "သိမ်းဆည်းထားသော အတွေးသစ်များ",
+        breathworkTitle: "အသက်ရှူ လေ့ကျင့်ရေး & သတိပြုမှု စတူဒီယို",
+        breathworkSub: "အသံနှင့် ပုံရိပ် လမ်းညွှန်ချက်များဖြင့် စိတ်ဖိစီးမှုကို လျှော့ချပါ။",
+        tabRhythmicBreathing: "အသက်ရှူ လေ့ကျင့်ခန်း",
+        tab54321Grounding: "5-4-3-2-1 အာရုံ ငါးပါး သတိပြုခြင်း",
+        groundingHeader: "5-4-3-2-1 အာရုံ ငါးပါး ပြန်လည်စုစည်းခြင်း",
+        groundingSub: "စိတ်ဖိစီးမှု လွန်ကဲချိန်တွင် လက်ရှိ ပစ္စုပ္ပန် သို့ စိတ်ပြန်လည် ရောက်ရှိစေမည့် နည်းလမ်း။",
+        sensory5: "မြင်တွေ့နိုင်သော အရာ ၅ ခုကို သတိပြုပါ",
+        sensory4: "ထိတွေ့နိုင်သော အရာ ၄ ခုကို သတိပြုပါ",
+        sensory3: "ကြားနိုင်သော အသံ ၃ ခုကို သတိပြုပါ",
+        sensory2: "ရနံ့ ၂ ခုကို သတိပြုပါ",
+        sensory1: "အရသာ ၁ ခုကို သတိပြုပါ",
+        sensory1: "အရသာ ၁ ခုကို သတိပြုပါ",
+        completeGrounding: "သတိပြုမှု ပြီးမြောက်ကြောင်း အတည်ပြုရန်",
+        assessmentTitle: "မိမိကိုယ်ကို စစ်ဆေးဆန်းစစ်ခြင်း",
+        assessmentSub: "သင့်စိတ်၏ ဖိစီးမှု၊ ပင်ပန်းမှုနှင့် သတိပြုနိုင်မှု အခြေအနေများကို စစ်ဆေးပါ။",
+        testBurnoutTitle: "စိတ်ဓာတ်ကျဆင်းမှု & ပင်ပန်းမှု တိုင်းတာခြင်း",
+        testBurnoutDesc: "ရုပ်ပိုင်းနှင့် စိတ်ပိုင်းဆိုင်ရာ နွမ်းနယ်မှုကို စစ်ဆေးပါ",
+        testStressTitle: "စိတ်ဝန်ထုပ် ပမာဏ တိုင်းတာခြင်း",
+        testStressDesc: "ဒီနေ့ စိတ်ထဲ ထမ်းပိုးထားရသည့် ဝန်ထုပ် ပမာဏကို တိုင်းတာပါ",
+        testMindfulTitle: "သတိရှိမှု & ငြိမ်းချမ်းမှု ညွှန်းကိန်း",
+        testMindfulDesc: "လက်ရှိ ပစ္စုပ္ပန်တွင် တည်ငြိမ်စွာ နေထိုင်နိုင်မှုကို တိုင်းတာပါ",
+        startTestBtn: "စစ်ဆေးမှု စတင်ရန် (မေးခွန်း ၅ ခု)",
+        assessmentResultHeader: "နောက်ဆုံး စစ်ဆေးမှု ရလဒ်",
+        tagJournalTitle: "ခွန်အားဖြည့်စာ & ဂျာနယ် မှတ်တမ်း",
+        tagJournalSub: "ခရီးဆောင်အိတ် ကတ်ပြား ခွန်အားဖြည့်စာများ ပြုလုပ်၍ နေ့စဉ် စိတ်ဓာတ် မှတ်တမ်း ရေးသားပါ။",
+        tagBuilderHeading: "စိတ်ဓာတ် ခွန်အားဖြည့် ခရီးဆောင်အိတ် ကတ်ပြား",
+        tagTextLabel: "ခွန်အားဖြည့် စာသား (အင်္ဂလိပ် / မြန်မာ)",
+        saveTagBtn: "ကတ်ပြားကို သိမ်းဆည်းရန်",
+        journalHeading: "စိတ်ခံစားချက် ဂျာနယ်",
+        saveJournalBtn: "ဂျာနယ် မှတ်တမ်း တင်ရန်",
+        releaseBaggageBtn: "ဒီဝန်ထုပ်ကို ဖြေလျှော့စွန့်လွှတ်ရန်",
+        addCustomTitle: "စိတ်ဝန်ထုပ် အသစ် ထည့်သွင်းရန်",
+        confirmPackBtn: "အိတ်ထဲ ထည့်သွင်းရန်"
+      }
+    };
+
+    let currentLang = localStorage.getItem('psychosuitcase_lang') || 'en';
+
+    function updateLanguageUI() {
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18n[currentLang] && i18n[currentLang][key]) {
+          el.innerText = i18n[currentLang][key];
+        }
+      });
+      document.getElementById('lang-label').innerText = currentLang === 'en' ? 'မြန်မာ' : 'English';
+      document.getElementById('lang-label-mobile').innerText = currentLang === 'en' ? 'မြန်မာ' : 'English';
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'my' : 'en';
+      localStorage.setItem('psychosuitcase_lang', currentLang);
+      updateLanguageUI();
+      renderSuitcaseItems();
+      renderCBTLog();
+      renderJournal();
+    }
+
+    /* ==========================================================================
+       2. DARK / LIGHT MODE CONTROLLER
+       ========================================================================== */
+    function toggleDarkMode() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('psychosuitcase_dark', isDark ? 'true' : 'false');
+      const icon = isDark ? 'fa-sun' : 'fa-moon';
+      document.getElementById('theme-icon').className = `fa-solid ${icon} text-xs`;
+      document.getElementById('theme-icon-mobile').className = `fa-solid ${icon}`;
+    }
+
+    if (localStorage.getItem('psychosuitcase_dark') === 'true') {
+      document.documentElement.classList.add('dark');
+    }
+
+    /* ==========================================================================
+       3. DEFAULT INITIAL DATA STORE (LOCALSTORAGE PERSISTENCE)
+       ========================================================================== */
+    const defaultSuitcaseItems = [
+      {
+        id: 'item-1',
+        titleEn: 'Overthinking & Rumination',
+        titleMy: 'လွန်ကဲစွာ တွေးတောခြင်း',
+        icon: '🧠',
+        weight: 'Heavy (4.5kg)',
+        unpacked: false,
+        insightEn: 'Overthinking gives a false illusion of control over unpredictable events, leading to mental paralysis.',
+        insightMy: 'လွန်ကဲစွာ တွေးတောခြင်းသည် မရေရာသော အနာဂတ်ကို ထိန်းချုပ်နိုင်သည်ဟု အထင်မှားစေပြီး စိတ်ကို ပင်ပန်းစေသည်။',
+        stepsEn: ['Acknowledge the thought as a story, not a fact.', 'Set a 5-minute worry timer, then switch tasks.', 'Focus on what action is directly under your control right now.']
+      },
+      {
+        id: 'item-2',
+        titleEn: 'Burnout & Exhaustion',
+        titleMy: 'စိတ်ဓာတ်ကျဆင်းပြီး အင်အားကုန်ခမ်းခြင်း',
+        icon: '🔋',
+        weight: 'Heavy (5.0kg)',
+        unpacked: false,
+        insightEn: 'Burnout is a signal that your output has exceeded your emotional rest and replenishment for too long.',
+        insightMy: 'Burnout ဖြစ်ခြင်းသည် သင်၏ ကြိုးစားအားထုတ်မှုနှင့် အနားယူမှု ပမာဏ မမျှတတော့ကြောင်း အချက်ပြခြင်းဖြစ်သည်။',
+        stepsEn: ['Set firm boundaries around rest without guilt.', 'Unplug from digital screens for 30 minutes.', 'Prioritize restorative sleep tonight.']
+      },
+      {
+        id: 'item-3',
+        titleEn: 'Imposter Syndrome',
+        titleMy: 'မိမိကိုယ်ကို မထိုက်တန်ဟု ခံစားရခြင်း',
+        icon: '🎭',
+        weight: 'Medium (2.5kg)',
+        unpacked: false,
+        insightEn: 'Imposter syndrome thrives when you compare your internal self-doubts with everyone else\'s highlight reel.',
+        insightMy: 'မိမိ၏ စိုးရိမ်စိတ်များကို သူတစ်ပါး၏ အောင်မြင်မှုများနှင့် နှိုင်းယှဉ်သောအခါ မထိုက်တန်ဟု ခံစားရတတ်သည်။',
+        stepsEn: ['List 3 hard facts that prove your competence.', 'Separate feelings of uncertainty from actual evidence.', 'Celebrate small daily achievements.']
+      },
+      {
+        id: 'item-4',
+        titleEn: 'Perfectionism Trap',
+        titleMy: 'ပြီးပြည့်စုံချင်စိတ် လွန်ကဲခြင်း',
+        icon: '📐',
+        weight: 'Medium (3.0kg)',
+        unpacked: false,
+        insightEn: 'Perfectionism is fear wearing a fancy disguise. It prevents progress under the guise of high standards.',
+        insightMy: 'ပြီးပြည့်စုံချင်စိတ် လွန်ကဲခြင်းသည် ကျရှုံးမည်ကို ကြောက်ရွံ့စိတ်မှ စတင်လေ့ရှိသည်။',
+        stepsEn: ['Adopt the 80% rule: Done is better than perfect.', 'View mistakes as research data, not failure.', 'Practice self-compassion when things go off track.']
+      },
+      {
+        id: 'item-5',
+        titleEn: 'People Pleasing',
+        titleMy: 'သူတစ်ပါး စိတ်ကျေနပ်အောင် အမြဲလိုက်လုပ်ခြင်း',
+        icon: '🤝',
+        weight: 'Medium (2.8kg)',
+        unpacked: false,
+        insightEn: 'Saying yes to others when you want to say no is saying no to your own emotional well-being.',
+        insightMy: 'မိမိစိတ်ကို ဆန့်ကျင်၍ သူတစ်ပါး အကြိုက် လိုက်လုပ်ခြင်းသည် မိမိကိုယ်ကို လျစ်လျူရှုခြင်း ဖြစ်သည်။',
+        stepsEn: ['Pause for 10 seconds before agreeing to requests.', 'Practice saying "Let me check my availability first".', 'Remember that setting boundaries is healthy.']
+      },
+      {
+        id: 'item-6',
+        titleEn: 'Fear of Failure',
+        titleMy: 'ကျရှုံးမည်ကို ကြောက်ရွံ့ခြင်း',
+        icon: '⚓',
+        weight: 'Heavy (4.0kg)',
+        unpacked: false,
+        insightEn: 'Failure is not the opposite of success; it is a stepping stone along the journey.',
+        insightMy: 'ကျရှုံးခြင်းသည် အောင်မြင်မှု၏ ဆန့်ကျင်ဘက် မဟုတ်ပါ၊ အောင်မြင်မှု လမ်းစ၏ အစိတ်အပိုင်း တစ်ခုဖြစ်သည်။',
+        stepsEn: ['Ask yourself: What is the worst realistic outcome?', 'Plan 1 simple recovery step if things don\'t go as planned.', 'Focus on growth rather than outcome.']
+      }
+    ];
+
+    let state = {
+      suitcaseItems: JSON.parse(localStorage.getItem('psychosuitcase_items')) || defaultSuitcaseItems,
+      cbtEntries: JSON.parse(localStorage.getItem('psychosuitcase_cbt')) || [],
+      moodHistory: JSON.parse(localStorage.getItem('psychosuitcase_moods')) || [
+        { date: 'Mon', score: 3 },
+        { date: 'Tue', score: 4 },
+        { date: 'Wed', score: 2 },
+        { date: 'Thu', score: 3 },
+        { date: 'Fri', score: 4 },
+        { date: 'Sat', score: 5 },
+        { date: 'Sun', score: 4 }
+      ],
+      journalEntries: JSON.parse(localStorage.getItem('psychosuitcase_journal')) || [],
+      stats: JSON.parse(localStorage.getItem('psychosuitcase_stats')) || { unpacked: 0, reframed: 0, breathSessions: 0 }
+    };
+
+    function saveState() {
+      localStorage.setItem('psychosuitcase_items', JSON.stringify(state.suitcaseItems));
+      localStorage.setItem('psychosuitcase_cbt', JSON.stringify(state.cbtEntries));
+      localStorage.setItem('psychosuitcase_moods', JSON.stringify(state.moodHistory));
+      localStorage.setItem('psychosuitcase_journal', JSON.stringify(state.journalEntries));
+      localStorage.setItem('psychosuitcase_stats', JSON.stringify(state.stats));
+    }
+
+    /* ==========================================================================
+       4. NAVIGATION & TAB CONTROLLER
+       ========================================================================== */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
+      document.getElementById(`view-${tabId}`).classList.remove('hidden');
+
+      // Desktop active tab CSS
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.className = "nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all duration-200";
+      });
+      const activeBtn = document.getElementById(`nav-${tabId}`);
+      if(activeBtn) {
+        activeBtn.className = "nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 bg-brand-50 text-brand-600 dark:bg-brand-900/40 dark:text-brand-300";
+      }
+
+      // Update Header Title
+      const titleMap = {
+        dashboard: i18n[currentLang].navDashboard,
+        suitcase: i18n[currentLang].navSuitcase,
+        mindlab: i18n[currentLang].navMindLab,
+        breathwork: i18n[currentLang].navBreathwork,
+        assessment: i18n[currentLang].navAssessment,
+        journal: i18n[currentLang].navJournal
+      };
+      document.getElementById('header-page-title').innerText = titleMap[tabId] || 'Psychosuitcase';
+    }
+
+    /* ==========================================================================
+       5. DASHBOARD & CHART.JS INITIALIZATION
+       ========================================================================== */
+    let moodChartInstance = null;
+
+    function initMoodChart() {
+      const ctx = document.getElementById('moodChart').getContext('2d');
+      const labels = state.moodHistory.map(m => m.date);
+      const data = state.moodHistory.map(m => m.score);
+
+      moodChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Mood Level',
+            data: data,
+            borderColor: '#6366f1',
+            backgroundColor: 'rgba(99, 102, 241, 0.15)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 5,
+            pointBackgroundColor: '#34d399',
+            pointBorderColor: '#ffffff',
+            pointHoverRadius: 7
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              min: 1,
+              max: 5,
+              ticks: {
+                stepSize: 1,
+                callback: function(val) {
+                  const emojis = ['', '😫', '😔', '😐', '🙂', '🤩'];
+                  return emojis[val] || val;
+                }
+              },
+              grid: { color: 'rgba(156, 163, 175, 0.1)' }
+            },
+            x: {
+              grid: { display: false }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    function recordMood(score, label) {
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const today = days[new Date().getDay()];
+      
+      state.moodHistory.shift();
+      state.moodHistory.push({ date: today, score: score });
+      saveState();
+
+      if (moodChartInstance) {
+        moodChartInstance.data.labels = state.moodHistory.map(m => m.date);
+        moodChartInstance.data.datasets[0].data = state.moodHistory.map(m => m.score);
+        moodChartInstance.update();
+      }
+
+      // Show Feedback Banner
+      const banner = document.getElementById('mood-feedback-banner');
+      banner.classList.remove('hidden');
+      const emojis = ['', '😫', '😔', '😐', '🙂', '🤩'];
+      document.getElementById('logged-mood-emoji').innerText = emojis[score];
+      document.getElementById('logged-mood-title').innerText = `Mood: ${label}`;
+    }
+
+    function updateDashboardStats() {
+      document.getElementById('stat-unpacked-count').innerText = state.stats.unpacked;
+      document.getElementById('stat-reframed-count').innerText = state.stats.reframed;
+      document.getElementById('stat-breath-count').innerText = state.stats.breathSessions;
+    }
+
+    /* ==========================================================================
+       6. DIGITAL SUITCASE UNPACKER MODULE
+       ========================================================================== */
+    let currentSelectedItemId = null;
+
+    function renderSuitcaseItems() {
+      const container = document.getElementById('suitcase-items-grid');
+      container.innerHTML = '';
+
+      let unpackedCount = 0;
+
+      state.suitcaseItems.forEach(item => {
+        if(item.unpacked) unpackedCount++;
+
+        const card = document.createElement('div');
+        card.className = `p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between cursor-pointer ${
+          item.unpacked 
+            ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/50 opacity-70' 
+            : 'bg-white/70 dark:bg-slate-800/70 border-slate-200/80 dark:border-slate-700/80 hover:shadow-xl hover:-translate-y-1'
+        }`;
+
+        const title = currentLang === 'my' ? item.titleMy : item.titleEn;
+
+        card.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">${item.icon}</span>
+              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                item.unpacked ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-300'
+              }">
+                ${item.unpacked ? 'Unpacked ✨' : item.weight}
+              </span>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100">${title}</h4>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">${currentLang === 'my' ? item.insightMy : item.insightEn}</p>
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 mt-3 flex justify-between items-center text-xs font-semibold text-brand-600 dark:text-brand-400">
+            <span>${item.unpacked ? 'Released' : 'Inspect & Unpack'}</span>
+            <i class="fa-solid ${item.unpacked ? 'fa-check-circle text-emerald-500' : 'fa-arrow-right'}"></i>
+          </div>
+        `;
+
+        card.onclick = () => openUnpackModal(item.id);
+        container.appendChild(card);
+      });
+
+      // Update progress bar
+      const pct = Math.round((unpackedCount / state.suitcaseItems.length) * 100) || 0;
+      document.getElementById('unpack-progress-percent').innerText = `${pct}%`;
+      document.getElementById('unpack-progress-bar').style.width = `${pct}%`;
+      document.getElementById('baggage-weight-indicator').innerText = `Total Loaded: ${state.suitcaseItems.length - unpackedCount} Active Items`;
+    }
+
+    function openUnpackModal(itemId) {
+      currentSelectedItemId = itemId;
+      const item = state.suitcaseItems.find(i => i.id === itemId);
+      if(!item) return;
+
+      document.getElementById('modal-item-icon').innerText = item.icon;
+      document.getElementById('modal-item-title').innerText = item.titleEn;
+      document.getElementById('modal-item-my').innerText = item.titleMy;
+      document.getElementById('modal-item-insight').innerText = currentLang === 'my' ? item.insightMy : item.insightEn;
+
+      const stepsList = document.getElementById('modal-item-steps');
+      stepsList.innerHTML = '';
+      item.stepsEn.forEach(step => {
+        const li = document.createElement('li');
+        li.className = 'flex items-start space-x-2';
+        li.innerHTML = `<i class="fa-solid fa-circle-check text-mint-500 mt-0.5"></i><span>${step}</span>`;
+        stepsList.appendChild(li);
+      });
+
+      document.getElementById('modal-unpack-detail').classList.remove('hidden');
+    }
+
+    function closeUnpackModal() {
+      document.getElementById('modal-unpack-detail').classList.add('hidden');
+    }
+
+    function triggerReleaseBaggage() {
+      if(!currentSelectedItemId) return;
+      const item = state.suitcaseItems.find(i => i.id === currentSelectedItemId);
+      if(item) {
+        if(!item.unpacked) {
+          item.unpacked = true;
+          state.stats.unpacked++;
+          saveState();
+          updateDashboardStats();
+        }
+      }
+      closeUnpackModal();
+      renderSuitcaseItems();
+      playChimeSound();
+    }
+
+    function openAddCustomModal() {
+      document.getElementById('modal-add-custom').classList.remove('hidden');
+    }
+    function closeAddCustomModal() {
+      document.getElementById('modal-add-custom').classList.add('hidden');
+    }
+
+    function handleAddCustomItem(e) {
+      e.preventDefault();
+      const title = document.getElementById('custom-item-name').value;
+      const insight = document.getElementById('custom-item-insight').value;
+
+      const newItem = {
+        id: 'custom-' + Date.now(),
+        titleEn: title,
+        titleMy: title,
+        icon: '🧳',
+        weight: 'Medium (2.0kg)',
+        unpacked: false,
+        insightEn: insight,
+        insightMy: insight,
+        stepsEn: ['Acknowledge this heavy thought.', 'Breathe deeply for 4 seconds.', 'Release it into peace.']
+      };
+
+      state.suitcaseItems.push(newItem);
+      saveState();
+      renderSuitcaseItems();
+      closeAddCustomModal();
+    }
+
+    /* ==========================================================================
+       7. MIND LAB (CBT REFRAMER) LOGIC
+       ========================================================================== */
+    function selectDistortion(btn, distortionName) {
+      document.querySelectorAll('.distortion-chip').forEach(c => {
+        c.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-brand-900/40', 'text-brand-600');
+      });
+      btn.classList.add('border-brand-500', 'bg-brand-50', 'dark:bg-brand-900/40', 'text-brand-600');
+      document.getElementById('cbt-distortion-val').value = distortionName;
+    }
+
+    function saveCBTThought(e) {
+      e.preventDefault();
+      const situation = document.getElementById('cbt-situation').value;
+      const thought = document.getElementById('cbt-thought').value;
+      const distortion = document.getElementById('cbt-distortion-val').value;
+      const reframed = document.getElementById('cbt-reframed').value;
+
+      const entry = {
+        id: 'cbt-' + Date.now(),
+        date: new Date().toLocaleDateString(),
+        situation,
+        thought,
+        distortion,
+        reframed
+      };
+
+      state.cbtEntries.unshift(entry);
+      state.stats.reframed++;
+      saveState();
+
+      document.getElementById('cbt-form').reset();
+      renderCBTLog();
+      updateDashboardStats();
+      playChimeSound();
+    }
+
+    function renderCBTLog() {
+      const container = document.getElementById('cbt-entries-log');
+      container.innerHTML = '';
+
+      document.getElementById('cbt-count-badge').innerText = `${state.cbtEntries.length} Saved`;
+
+      state.cbtEntries.forEach(entry => {
+        const item = document.createElement('div');
+        item.className = "p-4 rounded-2xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 space-y-2";
+        item.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300">
+              ${entry.distortion}
+            </span>
+            <span class="text-[10px] text-slate-400">${entry.date}</span>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 line-through">"${entry.thought}"</p>
+            <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1">✨ "${entry.reframed}"</p>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    /* ==========================================================================
+       8. WEB AUDIO SYNTHESIZER & BREATHWORK CONTROLLER
+       ========================================================================== */
+    let audioCtx = null;
+    let isSoundOn = true;
+    let breathInterval = null;
+    let isBreathingActive = false;
+    let breathPhase = 0; // 0: inhale, 1: hold, 2: exhale, 3: hold2
+    let breathTimer = 4;
+    let currentTechnique = 'box'; // 'box', 'relax', 'calm'
+
+    function playChimeSound() {
+      if (!isSoundOn) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5 tone
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 1.2);
+      } catch (e) { console.log(e); }
+    }
+
+    function toggleSoundSynth() {
+      isSoundOn = !isSoundOn;
+      const icon = document.getElementById('sound-icon');
+      icon.className = isSoundOn ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark text-slate-400';
+    }
+
+    function setBreathTechnique(tech) {
+      currentTechnique = tech;
+      ['box', 'relax', 'calm'].forEach(t => {
+        const btn = document.getElementById(`btn-tech-${t}`);
+        if (t === tech) {
+          btn.className = "flex-1 py-2 text-xs font-semibold rounded-xl bg-white dark:bg-slate-700 text-brand-600 dark:text-brand-300 shadow-sm transition-all";
+        } else {
+          btn.className = "flex-1 py-2 text-xs font-semibold rounded-xl text-slate-600 dark:text-slate-400 transition-all";
+        }
+      });
+      resetBreathSession();
+    }
+
+    function toggleBreathSession() {
+      if(isBreathingActive) {
+        pauseBreathSession();
+      } else {
+        startBreathSession();
+      }
+    }
+
+    function startBreathSession() {
+      isBreathingActive = true;
+      document.getElementById('breath-play-label').innerText = "Pause Session";
+      document.getElementById('breath-play-icon').className = "fa-solid fa-pause";
+      document.getElementById('breath-orb-outer').classList.add('breathe-active');
+
+      state.stats.breathSessions++;
+      saveState();
+      updateDashboardStats();
+
+      breathInterval = setInterval(updateBreathCycle, 1000);
+    }
+
+    function pauseBreathSession() {
+      isBreathingActive = false;
+      clearInterval(breathInterval);
+      document.getElementById('breath-play-label').innerText = "Resume Session";
+      document.getElementById('breath-play-icon').className = "fa-solid fa-play";
+      document.getElementById('breath-orb-outer').classList.remove('breathe-active');
+    }
+
+    function resetBreathSession() {
+      pauseBreathSession();
+      breathTimer = 4;
+      breathPhase = 0;
+      document.getElementById('breath-timer-display').innerText = "4";
+      document.getElementById('breath-phase-text').innerText = "Ready to start";
+    }
+
+    function updateBreathCycle() {
+      breathTimer--;
+      document.getElementById('breath-timer-display').innerText = breathTimer;
+
+      const phasesMap = {
+        0: { text: "Inhale Slowly...", color: "from-brand-600 to-indigo-600" },
+        1: { text: "Hold Breath...", color: "from-purple-600 to-indigo-600" },
+        2: { text: "Exhale Gently...", color: "from-mint-500 to-teal-600" },
+        3: { text: "Hold...", color: "from-slate-600 to-brand-600" }
+      };
+
+      if (breathTimer <= 0) {
+        breathPhase = (breathPhase + 1) % 4;
+        if(currentTechnique === 'calm' && breathPhase === 1) breathPhase = 2; // skip hold for 5-5
+        breathTimer = 4;
+        playChimeSound();
+      }
+
+      document.getElementById('breath-phase-text').innerText = phasesMap[breathPhase].text;
+    }
+
+    function switchBreathSubtab(tab) {
+      if(tab === 'breath') {
+        document.getElementById('subtab-content-breath').classList.remove('hidden');
+        document.getElementById('subtab-content-grounding').classList.add('hidden');
+        document.getElementById('subtab-breath').className = "pb-3 text-sm font-bold border-b-2 border-brand-500 text-brand-600 dark:text-brand-400";
+        document.getElementById('subtab-grounding').className = "pb-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200";
+      } else {
+        document.getElementById('subtab-content-breath').classList.add('hidden');
+        document.getElementById('subtab-content-grounding').classList.remove('hidden');
+        document.getElementById('subtab-grounding').className = "pb-3 text-sm font-bold border-b-2 border-brand-500 text-brand-600 dark:text-brand-400";
+        document.getElementById('subtab-breath').className = "pb-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200";
+      }
+    }
+
+    function finishGroundingExercise() {
+      playChimeSound();
+      alert("Sensory grounding exercise completed! Your awareness is anchored to the present moment.");
+    }
+
+    /* ==========================================================================
+       9. SELF-ASSESSMENT HUB LOGIC
+       ========================================================================== */
+    function startAssessment(type) {
+      alert("Self-Assessment initialized! Answer with self-compassion to receive tailored mental wellness insights.");
+    }
+
+    /* ==========================================================================
+       10. LUGGAGE TAG CREATOR & MICRO JOURNAL LOGIC
+       ========================================================================== */
+    function updateTagPreview() {
+      const text = document.getElementById('tag-input-text').value;
+      document.getElementById('tag-preview-text').innerText = `"${text}"`;
+    }
+
+    function setTagTheme(theme) {
+      const preview = document.getElementById('luggage-tag-preview');
+      const themesMap = {
+        indigo: 'from-indigo-600 via-brand-600 to-purple-700',
+        mint: 'from-emerald-600 via-teal-600 to-cyan-700',
+        amber: 'from-amber-600 via-orange-600 to-rose-700',
+        rose: 'from-rose-600 via-pink-600 to-purple-700'
+      };
+      preview.className = `relative max-w-sm mx-auto p-6 rounded-3xl bg-gradient-to-br ${themesMap[theme]} text-white shadow-2xl space-y-4 border-2 border-white/20`;
+    }
+
+    function saveLuggageTag() {
+      playChimeSound();
+      alert("Luggage Tag Affirmation saved to your personal gallery!");
+    }
+
+    function saveJournalEntry(e) {
+      e.preventDefault();
+      const text = document.getElementById('journal-text').value;
+      const entry = {
+        id: 'j-' + Date.now(),
+        date: new Date().toLocaleDateString(),
+        text: text
+      };
+      state.journalEntries.unshift(entry);
+      saveState();
+      document.getElementById('journal-text').value = '';
+      renderJournal();
+      playChimeSound();
+    }
+
+    function renderJournal() {
+      const container = document.getElementById('journal-entries-container');
+      container.innerHTML = '';
+
+      state.journalEntries.forEach(j => {
+        const card = document.createElement('div');
+        card.className = "p-3.5 rounded-2xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 text-xs space-y-1";
+        card.innerHTML = `
+          <div class="flex items-center justify-between text-[10px] text-slate-400">
+            <span>Entry</span>
+            <span>${j.date}</span>
+          </div>
+          <p class="text-slate-700 dark:text-slate-200 leading-relaxed">${j.text}</p>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* ==========================================================================
+       11. INITIALIZATION ON WINDOW LOAD
+       ========================================================================== */
+    window.onload = function() {
+      updateLanguageUI();
+      initMoodChart();
+      updateDashboardStats();
+      renderSuitcaseItems();
+      renderCBTLog();
+      renderJournal();
+    };
+  </script>
+</body>
+</html>
